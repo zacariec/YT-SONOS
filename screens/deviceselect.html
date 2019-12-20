@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../style.css">
-    <title>Document</title>
+    <title>Device Select</title>
 </head>
-<body onload="getDevices()">
+<body id="devices" onload="getDevices()">
     <div class="device_container">
-        <form id="device_form" action="http://localhost:4000/discover" method="post">
-            <select name="device" id="device_list">
+        <h1 id="loader_title">Looking for Sonos Devices...</h1>
+        <div id='loader' class="loader"></div>
+        <div class="selection_container">
+            <form class="hidden" id="device_form" action="http://localhost:4000/discover" method="post">
+                <select name="device" id="device_list">
 
-            </select>
-            <button id="device_submit" type="submit">go</button>
-        </form>
+                </select>
+                <button id="device_submit" type="submit">go</button>
+            </form>
+        </div>
     </div>
 
     <script src="../device.js"></script>

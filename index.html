@@ -5,38 +5,45 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <title>Hello World!</title>
+    <title>YT-Sonos</title>
   </head>
   <body onload="getVol() ">
+    <div id="nav">
+      <span onclick="closeWin()" id="close">&times;</span>
+      <span onclick="minimize()" id="minimize">-</span>
+    </div>
     <main class="content">
         <div id="hero_banner">
             <img src="./media/sonos.svg" alt="sonos">
           </div>
 
-          <form id="input_container" action="http://localhost:4000/song" method="POST" onsubmit="prevent()">
+          <form id="input_container" action="http://localhost:4000/song" method="POST">
             <input id="video_input" type="text" name="url" id="url" for="url" placeholder="enter a youtube url" required>
-            <button id="get_video"><i class="fas fa-share-square"></i></button>
+            <button id="get_video" onclick="submitSong()"><i class="fas fa-share-square"></i></button>
           </form>
       
       
           <div class="controls">
-            <form action="http://localhost:4000/sonos/stop" method="post" onsubmit="prevent()">
-              <button id="sonos_stop"><i class="fas fa-stop"></i></button>
+            <form id="form_stop" action="http://localhost:4000/sonos/stop" method="post">
+              <button id="sonos_stop" onclick="submitStop()"><i class="fas fa-stop"></i></button>
             </form>
       
-            <form action="http://localhost:4000/sonos/resume" method="post" onsubmit="prevent()">
-              <button id="sonos_play"><i class="fas fa-play"></i></button>
+            <form id="form_play" action="http://localhost:4000/sonos/resume" method="post">
+              <button id="sonos_play" onclick="submitPlay()"><i id="play" class="fas fa-play"></i></button>
             </form>
           </div>
+
+                    
+          <span onload="getVol()"></span>
+          <form id="volume_form" action="http://localhost:4000/sonos/volume" method="post">
+            <p>volume:</p>
+            <input name="volume" type="range" min="0" max="100" step="1" id="volume_slider" onchange="setVol()" oninput="setVol()">
+          </form>
 
           <div class="sonos_state">
             <h3 id="device_state"></h3>
           </div>
-          <div onload="getVol()"></div>
-          
-          <form id="volume_form" action="http://localhost:4000/sonos/volume" method="post">
-            <input name="volume" type="range" min="0" max="100" step="1" id="volume_slider" onchange="setVol()" oninput="setVol()">
-          </form>
+
           
     </main>
     <!-- You can also require other files to run in this process -->

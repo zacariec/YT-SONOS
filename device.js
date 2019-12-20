@@ -7,6 +7,9 @@ function getDevices(){
     })
     .then((data) => {
         data.forEach((device) =>{
+            document.getElementById('device_form').classList.remove('hidden');
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('loader_title').classList.add('hidden');
             console.log(device);
             var option = document.createElement('option');
             option.innerHTML = device;

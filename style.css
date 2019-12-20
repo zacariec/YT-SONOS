@@ -3,8 +3,30 @@
     font-family: 'Lato', sans-serif;
 }
 
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+/* ANIMATION KEY FRAMES */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /* DEVICE SELECT SCREEN */
+#devices {
+    overflow: hidden;
+}
+
 .device_container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -12,32 +34,112 @@
     left: 0;
     background-color: white;
     border: 1px solid rgb(34, 34, 34);
+    justify-content: center;
 }
 
-.device_list {
+.loader {
+    align-self: center;
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid rgb(34, 34, 34);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+#loader_title {
+    align-self: center;
+    position: relative;
+    top: -2em;
+}
+
+.selection_container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#device_form {
+    display: flex;
+    flex-direction: column;
+}
+
+#device_list {
+    align-self: center;
+    color: rgb(34, 34, 34);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-size: 36px;
+}
+
+#device_list:focus {
+    outline: none;
+}
+
+#device_item {
     color: rgb(34, 34, 34);
 }
 
-.device_item {
-    color: rgb(34, 34, 34);
+#device_submit {
+    width: 80px;
+    height: 30px;
+    background-color: rgb(34, 34, 34);
+    border: 1px solid rgb(34, 34, 34);
+    border-radius: 10%;
+    color: white;
+    text-transform: uppercase;
+    align-self: center;
+    margin-top: 1em;
 }
+
+#device_submit:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+/* FRAME */
+#nav {
+
+}
+
+#close {
+    font-size: 24px;
+    margin: 10px;
+}
+
+#minimize {
+    font-size: 24px;
+    padding: 10px;
+}
+
+#close:hover {
+    cursor: pointer;
+}
+
+#minimize:hover {
+    cursor: pointer;
+}
+
 
 /* MAIN SCREEN */
 .content {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    overflow: hidden;
 }
 
 #hero_banner {
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 1;
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: center;
+    padding-top: 2em;
 }
 
 #hero_banner img {
@@ -46,13 +148,9 @@
 }
 
 #input_container {
-    grid-row-start: 2;
-    grid-row-end: 3;
-    grid-column-start: 2;
-    grid-column-end: 3;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     width: 100%;
 }
 
@@ -102,12 +200,8 @@
 .controls {
     display: flex;
     flex-direction: row;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 3;
-    grid-row-end: 4;
     width: 100%;
-    justify-content: space-evenly;
+    justify-content: center;
     padding-top: 3em;
 }
 
@@ -118,7 +212,8 @@
     cursor: pointer;
     font-size: 150px;
     margin: 0;
-    padding: 0;
+    padding: 1em;
+    right: -0.5em;
 }
 
 #sonos_stop:hover {
@@ -136,7 +231,8 @@
     cursor: pointer;
     font-size: 150px;
     margin: 0;
-    padding: 0;
+    padding: 1em;
+    left: -0.5em;
 }
 
 #sonos_play:hover {
@@ -146,3 +242,31 @@
 #sonos_play:focus {
     outline: none;
 }
+
+#volume_form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#volume_form input {
+    width: 60%;
+    align-self: center;
+}
+
+#volume_form p {
+    align-self: center;
+    text-align: center;
+    width: 100%;
+}
+
+.sonos_state {
+    align-self: center;
+}
+
+#device_state {
+    font-style: italic;
+    opacity: 0.5;
+    font-weight: 100;
+}
+

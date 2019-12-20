@@ -8,6 +8,9 @@ const path = require('path');
 //Audio libraries.
 const ytdl = require('ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
+
+//TODO get the duration of each mp3 and enable seek on client end.
+//TODO Sonos is very finnicky with the way it requests songs, might be hard to implement.
 const mp3Duration = require('mp3-duration');
 
 //Sonos libraries
@@ -16,14 +19,14 @@ const { Sonos } = require('sonos');
 
 //Tools libraries
 const internalIp = require('internal-ip');
-const chokidar = require('chokidar');
 
 //Serve /stream directory.
 app.use(express.static(__dirname + '/stream'));
 //Use bodyParser to get input from Electron
 app.use(bodyParser.urlencoded({ extended: false }));
-//Find Sonos Device on network
 
+//Find Sonos Device on network. Electron uses a fetch request to this URL.
+//gives us a list of device IPs.
 app.get('/discover', function(req, res){
     let discovery = new DeviceDiscovery()
     discovery.discoverMultiple({ timeout: 5000 })
@@ -35,26 +38,22 @@ app.get('/discover', function(req, res){
 
         res.json(sonosDev);
     })
+    .catch((error) => {
+        console.log(error);
+    });
 });
 
+//Devices array
 let devices = [];
 
+//Discover route - requests the fetch data from app.get('/discover') and pushes
+//to our devices array for use later on.
 app.post('/discover', function(req, res){
     console.log(req.body.device);
     devices.push(req.body.device);
-            
-        /*chokidar.watch(`${__dirname}/stream`).on('change', (event, path) => {
-            const song = `http://${internalIp.v4()}:4000/1.mp3`;
-            sonos.play(`${song}`)
-            .then(() => {
-                console.log(`Now playing to Sonos Device on: ${sonos.host}`);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        });*/
 })
 
+//Route for electron to request device to stop playing.
 app.post('/sonos/stop', function(req, res){
     const sonos = new Sonos(devices[0]);
     sonos.stop()
@@ -63,6 +62,8 @@ app.post('/sonos/stop', function(req, res){
     })
 })
 
+//Route for electron to request device to resume playing
+//We use .togglePlayback() because .play() restarts the queue.
 app.post('/sonos/resume', function(req, res){
     const sonos = new Sonos(devices[0]);
     sonos.togglePlayback()
@@ -71,6 +72,7 @@ app.post('/sonos/resume', function(req, res){
     })
 })
 
+//Route for electron to request device state e.g. 'playing', 'paused' & 'stopped'
 app.get('/sonos/state', function(req, res){
     const sonos = new Sonos(devices[0]);
     sonos.getCurrentState().then(state => {
@@ -79,6 +81,7 @@ app.get('/sonos/state', function(req, res){
     });
 })
 
+//Route for electron to load volume integer and force slider state onload.
 app.get('/sonos/volume', function(req, res){ 
     const sonos = new Sonos(devices[0]);
     sonos.getVolume()
@@ -87,22 +90,48 @@ app.get('/sonos/volume', function(req, res){
     });
 });
 
+//Route for electron to change volume on device, use .setVolume() over .adjustVolume()
+//As .adjustVolume() only allows volume to go upwards not downwards.
 app.post('/sonos/volume', function(req, res){
     const sonos = new Sonos(devices[0]);
     console.log(req.body.volume);
     sonos.setVolume(req.body.volume)
 })
 
-app.post('/song', function(req, res){
+//Route for electron to send Youtube URL to our server, which inturn
+//uses ytdl to convert the .mp4/.flv/whatever video
+//to a .mp3 and pipes the song to the Sonos device when fluent-ffmpeg
+//starts its process.
+
+//TODO
+//I do believe that this is causing the songs to stop and start over and over.
+//This instantly executes the song request to the sonos device though.
+//.on('progress') doesn't work as there are too many progressions.
+//Causing it to do the same thing.
+app.post('/song', function(req, res) {
     const sonos = new Sonos(devices[0]);
-    var stream = ytdl(req.body.url)
+    var url = req.body.url;
+
+    ytdl.getInfo(url, (err, info) => {
+        if (err) {
+            console.log(err);
+        };
+        app.set('songInfo', info.title)
+    });
+
+    var stream = ytdl(url)
     .on('close', function(){
         console.log('finished downloading yt video');
     });
 
+    //We pass the YTDL function to ffmpeg, cuts down on processing time.
     ffmpeg(stream)
-    .audioBitrate(128)
+    .audioBitrate(320)
     .saveToFile(`${__dirname}/stream/1.mp3`)
+    .on('start', function(){
+        console.log('started converting, piping to Sonos.');
+
+    })
     .on('progress', function(p){
         console.log(`${p.targetSize} converted`);
     })
@@ -115,7 +144,14 @@ app.post('/song', function(req, res){
     });
 });
 
+app.get('/song/info', function(req, res){
+    res.json({ data: app.get('songInfo')});
+})
 
+//This serves the .mp3 file to our url which Sonos REQUIRES the url to
+//end in .mp3 regardless, otherwise it will not play. >:(
+//We also have to write the head with what it is, and the content-length.
+//This helps Sonos understand what's playing... This took too long to figure out.
 app.get('/', function(req, res){
     var fPath = `${__dirname}/stream/1.mp3`;
     var stat = fs.statSync(fPath);

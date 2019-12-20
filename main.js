@@ -11,7 +11,8 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 1200,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
@@ -39,13 +40,11 @@ let deviceSelect;
 
 function createDeviceSelect(){
 
-
-
   deviceSelect = new BrowserWindow({
-      width: 800,
-      height: 600,
-      transparent: true,
+      width: 500,
+      height: 400,
       resizable: true,
+      frame: false,
       webPreferences: {
         nodeIntegration: true
       }
@@ -76,6 +75,9 @@ ipcMain.on('createBrowserWindow', function(){
   createWindow();
 });
 
+ipcMain.on('close', function(){
+  app.exit(0);
+})
 
 
 // Quit when all windows are closed.
