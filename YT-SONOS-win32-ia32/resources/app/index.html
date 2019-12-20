@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <title>Hello World!</title>
+  </head>
+  <body onload="getVol() ">
+    <main class="content">
+        <div id="hero_banner">
+            <img src="./media/sonos.svg" alt="sonos">
+          </div>
+
+          <form id="input_container" action="http://localhost:4000/song" method="POST" onsubmit="prevent()">
+            <input id="video_input" type="text" name="url" id="url" for="url" placeholder="enter a youtube url" required>
+            <button id="get_video"><i class="fas fa-share-square"></i></button>
+          </form>
+      
+      
+          <div class="controls">
+            <form action="http://localhost:4000/sonos/stop" method="post" onsubmit="prevent()">
+              <button id="sonos_stop"><i class="fas fa-stop"></i></button>
+            </form>
+      
+            <form action="http://localhost:4000/sonos/resume" method="post" onsubmit="prevent()">
+              <button id="sonos_play"><i class="fas fa-play"></i></button>
+            </form>
+          </div>
+
+          <div class="sonos_state">
+            <h3 id="device_state"></h3>
+          </div>
+          <div onload="getVol()"></div>
+          
+          <form id="volume_form" action="http://localhost:4000/sonos/volume" method="post">
+            <input name="volume" type="range" min="0" max="100" step="1" id="volume_slider" onchange="setVol()" oninput="setVol()">
+          </form>
+          
+    </main>
+    <!-- You can also require other files to run in this process -->
+    <script src="./js.js"></script>
+    <script src="./renderer.js"></script>
+    <script src="https://kit.fontawesome.com/d509b31443.js" crossorigin="anonymous"></script>
+  </body>
+</html>

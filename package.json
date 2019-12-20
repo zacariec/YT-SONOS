@@ -1,0 +1,24 @@
+{
+  "name": "YT-SONOS",
+  "version": "1.0.0",
+  "description": "A Electron App to send Youtube videos to Sonos.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "youtube.sonos.app",
+    "win": {
+      "category": "audio"
+    }
+  },
+  "author": "ZacC",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^7.1.4",
+    "electron-builder": "^21.2.0"
+  },
+  "dependencies": {}
+}
