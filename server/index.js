@@ -7,7 +7,10 @@ const path = require('path');
 
 //Audio libraries.
 const ytdl = require('ytdl-core');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 
 //TODO get the duration of each mp3 and enable seek on client end.
 //TODO Sonos is very finnicky with the way it requests songs, might be hard to implement.
@@ -130,17 +133,19 @@ app.post('/song', function(req, res) {
     .saveToFile(`${__dirname}/stream/1.mp3`)
     .on('start', function(){
         console.log('started converting, piping to Sonos.');
-
+        var serverIp = internalIp.v4.sync();
+        console.log(serverIp);
+        sonos.play(`http://${serverIp}:4000/1.mp3`)
+        .catch((error) => {
+            console.log('Oh no, an error has occurred: ', error);
+            res.json(error);
+        });
     })
     .on('progress', function(p){
         console.log(`${p.targetSize} converted`);
     })
     .on('end', function(){
         console.log('finished converting video to audio');
-        sonos.play(`http://${internalIp.v4()}:4000/stream/1.mp3`)
-        .catch((error) => {
-            console.log('Oh no, an error has occurred: ', error);
-        });
     });
 });
 
