@@ -17,6 +17,7 @@ At the moment, it grabs the video caches it, converts it to .mp3 and streams it 
 
 ## Downloads
 see the releases page [here](https://github.com/GPudgima/releases "Releases")
+
 **Currently supports:**
 * [OSX](https://github.com/GPudgima/YT-SONOS/releases/download/0.3.1/YT-SONOS-darwin-x64.zip "OSX Release")
 * [Win](https://github.com/GPudgima/YT-SONOS/releases/download/0.3.1/YT-SONOS-win32-x64.zip "Windows Release")
