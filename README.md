@@ -19,9 +19,9 @@ At the moment, it grabs the video caches it, converts it to .mp3 and streams it 
 see the releases page [here](https://github.com/GPudgima/releases "Releases")
 
 **Currently supports:**
-* [OSX](https://github.com/GPudgima/YT-SONOS/releases/download/0.3.1/YT-SONOS-darwin-x64.zip "OSX Release")
-* [Win](https://github.com/GPudgima/YT-SONOS/releases/download/0.3.1/YT-SONOS-win32-x64.zip "Windows Release")
-* [Linux](https://github.com/GPudgima/YT-SONOS/releases/download/0.3.1/YT-SONOS-linux-x64.zip "Linux Release")
+* OSX
+* Windows
+* Linux
 
 ## Dev Environment
 To run in the Dev Environment, please clone the repo then:
