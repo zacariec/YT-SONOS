@@ -22,6 +22,7 @@ const { Sonos } = require('sonos');
 
 //Tools libraries
 const internalIp = require('internal-ip');
+var serverIp = internalIp.v4.sync();
 
 //Serve /stream directory.
 app.use(express.static(__dirname + '/stream'));
@@ -36,13 +37,15 @@ app.get('/discover', function(req, res){
     .then((devices) => {
         let sonosDev = [];
         devices.forEach(device => {
-            sonosDev.push(device.host);
+            sonosDev.push(`${device.host}`);
         });
 
         res.json(sonosDev);
     })
     .catch((error) => {
-        console.log(error);
+        if(error){
+            res.sendStatus(404);
+        }
     });
 });
 
@@ -54,6 +57,7 @@ let devices = [];
 app.post('/discover', function(req, res){
     console.log(req.body.device);
     devices.push(req.body.device);
+    return false;
 })
 
 //Route for electron to request device to stop playing.
@@ -63,6 +67,7 @@ app.post('/sonos/stop', function(req, res){
     .catch((error) => {
         console.log('Oh no, an error has occurred: ', error);
     })
+    return false;
 })
 
 //Route for electron to request device to resume playing
@@ -73,6 +78,7 @@ app.post('/sonos/resume', function(req, res){
     .catch((error) => {
         console.log('Oh no, an error has occurred: ', error);
     })
+    return false;
 })
 
 //Route for electron to request device state e.g. 'playing', 'paused' & 'stopped'
@@ -99,6 +105,7 @@ app.post('/sonos/volume', function(req, res){
     const sonos = new Sonos(devices[0]);
     console.log(req.body.volume);
     sonos.setVolume(req.body.volume)
+    return false;
 })
 
 //Route for electron to send Youtube URL to our server, which inturn
@@ -114,40 +121,69 @@ app.post('/sonos/volume', function(req, res){
 app.post('/song', function(req, res) {
     const sonos = new Sonos(devices[0]);
     var url = req.body.url;
-
-    ytdl.getInfo(url, (err, info) => {
-        if (err) {
-            console.log(err);
-        };
-        app.set('songInfo', info.title)
-    });
-
-    var stream = ytdl(url)
-    .on('close', function(){
-        console.log('finished downloading yt video');
-    });
-
-    //We pass the YTDL function to ffmpeg, cuts down on processing time.
-    ffmpeg(stream)
-    .audioBitrate(320)
-    .saveToFile(`${__dirname}/stream/1.mp3`)
-    .on('start', function(){
-        console.log('started converting, piping to Sonos.');
-        var serverIp = internalIp.v4.sync();
-        console.log(serverIp);
-        sonos.play(`http://${serverIp}:4000/1.mp3`)
-        .catch((error) => {
-            console.log('Oh no, an error has occurred: ', error);
-            res.json(error);
+    
+    if(url.includes('youtube')){
+        ytdl.getInfo(url, (err, info) => {
+            if (err) {
+                console.log(err);
+            };
+            app.set('songInfo', info.title)
         });
-    })
-    .on('progress', function(p){
-        console.log(`${p.targetSize} converted`);
-    })
-    .on('end', function(){
-        console.log('finished converting video to audio');
-    });
+    
+        var stream = ytdl(url)
+        .on('close', function(){
+            console.log('finished downloading yt video');
+        });
+    
+        //We pass the YTDL function to ffmpeg, cuts down on processing time.
+        ffmpeg(stream)
+        .audioBitrate(128)
+        .saveToFile(`${__dirname}/stream/1.mp3`)
+        .on('start', function(){
+            console.log('started converting, piping to Sonos.');
+        })
+        .on('progress', function(p){
+            console.log(`${p.targetSize} converted`);
+        })
+        .on('end', function(){
+            console.log('finished converting video to audio');
+            sonos.play(`http://${serverIp}:4000/1.mp3`)
+            .then((success) => {
+                console.log(success);
+            })
+            .then(() => {
+                sonos.removeTracksFromQueue(2)
+                .then((success) => {
+                    console.log(success)
+                })
+                .catch((error) => {
+                    console.log('Oops, no tracks to remove from queue.', error);
+                })
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        });
+
+        return false;
+    } else {
+        return false;
+    }
 });
+
+app.post('/close', function(req, res){
+    const sonos = new Sonos(devices[0]);
+    sonos.removeTracksFromQueue(1)
+    .then(() => {
+        res.end();
+    })
+    .catch((error) => {
+        if(error){
+            res.sendStatus(404);
+        }
+
+    })
+})
 
 app.get('/song/info', function(req, res){
     res.json({ data: app.get('songInfo')});

@@ -1,8 +1,23 @@
 const { remote, ipcRenderer, app } = require('electron');
 
 function submitSong(){
-    document.getElementById('input_container').submit()
-    return false;
+    var input = document.getElementById('video_input');
+    var inpVal = input.value
+    if(inpVal.includes('youtube')){
+            document.getElementById('input_container').submit()
+            return false;
+    } else {
+        var error = document.getElementById('error');
+        error.innerText = 'Please enter a valid Youtube video.';
+        error.classList.remove('hidden');
+        error.classList.add('error');
+
+        setTimeout(() => {
+            error.classList.add('hidden');
+            error.classList.remove('shake');
+        }, 4000)
+        return false;
+    }
 }
 
 function submitStop(){
@@ -76,7 +91,13 @@ function getVol(){
 function closeWin(){
     console.log('closing')
     var win = remote.getCurrentWindow();
-    win.destroy();
+    fetch('http://localhost:4000/close',{
+        method: 'POST'
+    }).then(() => {
+        win.destroy();
+    })
+
+
 }
 
 function minimize(){

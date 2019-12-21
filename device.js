@@ -1,6 +1,15 @@
 const { remote, ipcRenderer } = require('electron')
 
 function getDevices(){
+    var errorContainer = document.getElementById('error_container');
+    var domError = document.getElementById('error');
+    var loadTitle = document.getElementById('loader_title');
+    var loader = document.getElementById('loader');
+    
+    errorContainer.classList.add('hidden');
+    loadTitle.classList.remove('hidden');
+    loader.classList.remove('hidden');
+
     fetch('http://localhost:4000/discover')
     .then((response) =>{
         return response.json();
@@ -18,6 +27,16 @@ function getDevices(){
 
             document.getElementById('device_list').appendChild(option);
         })
+    })
+    .catch((error) => {
+        if(error){
+            loadTitle.classList.add('hidden');
+            loader.classList.add('hidden');
+            domError.innerText = 'Oh oh. We couldn\'t find a device. Please try again.'
+            errorContainer.classList.remove('hidden');
+            domError.classList.add('error');
+
+        }
     })
 }
 

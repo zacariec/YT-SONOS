@@ -11,6 +11,12 @@
     <div class="device_container">
         <h1 id="loader_title">Looking for Sonos Devices...</h1>
         <div id='loader' class="loader"></div>
+        
+        <div id="error_container" class="hidden">
+            <i id="reload" class="fas fa-redo" onclick="getDevices()"></i>
+            <span id="error"></span>
+        </div>
+        
         <div class="selection_container">
             <form class="hidden" id="device_form" action="http://localhost:4000/discover" method="post">
                 <select name="device" id="device_list">
@@ -23,5 +29,6 @@
 
     <script src="../device.js"></script>
     <script src="../renderer.js"></script>
+    <script src="https://kit.fontawesome.com/d509b31443.js" crossorigin="anonymous"></script>
 </body>
 </html>

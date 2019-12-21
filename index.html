@@ -7,20 +7,22 @@
   <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
     <title>YT-Sonos</title>
   </head>
-  <body onload="getVol()" style="-webkit-app-region: drag">
+  <body onload="getVol()" >
     <div id="nav">
       <span onclick="closeWin()" id="close">&times;</span>
       <span onclick="minimize()" id="minimize">-</span>
     </div>
     <main class="content">
         <div id="hero_banner">
-            <img src="./media/sonos.svg" alt="sonos">
+            <img src="./media/YT-SONOS.png" alt="sonos">
           </div>
 
           <form id="input_container" action="http://localhost:4000/song" method="POST">
-            <input id="video_input" type="text" name="url" id="url" for="url" placeholder="enter a youtube url" required>
+            <input id="video_input" type="text" name="url" id="url" for="url" placeholder="enter a youtube url">
             <button id="get_video" onclick="submitSong()"><i class="fas fa-share-square"></i></button>
           </form>
+
+          <span id="error" class="hidden"></span>
       
       
           <div class="controls">

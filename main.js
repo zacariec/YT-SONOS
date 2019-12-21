@@ -41,8 +41,8 @@ let deviceSelect;
 function createDeviceSelect(){
 
   deviceSelect = new BrowserWindow({
-      width: 500,
-      height: 400,
+      width: 450,
+      height: 800,
       resizable: true,
       frame: false,
       webPreferences: {
