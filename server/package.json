@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",
     "internal-ip": "^5.0.0",
-    "mp3-duration": "^1.1.0",
+    "music-metadata": "^7.5.2",
     "sonos": "^1.12.5",
     "ytdl-core": "^1.0.3"
   },

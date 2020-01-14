@@ -14,7 +14,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 //TODO get the duration of each mp3 and enable seek on client end.
 //TODO Sonos is very finnicky with the way it requests songs, might be hard to implement.
-const mp3Duration = require('mp3-duration');
+const mm = require('music-metadata');
 
 //Sonos libraries
 const DeviceDiscovery = require('sonos').AsyncDeviceDiscovery;
