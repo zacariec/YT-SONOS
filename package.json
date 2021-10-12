@@ -15,7 +15,7 @@
   "author": "ZacC",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.4"
+    "electron": "^11.5.0"
   },
   "dependencies": {
   }
